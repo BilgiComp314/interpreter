@@ -50,7 +50,6 @@
 ; (f x) (x=3) -> ERROR
 ; (f x) (x=3, f=(funDef n (+ n 3)) -> 6
 ; ((fundef x (+ x 3)) 3) (empty Env) -> 6
-; ((fundef x (+ x 5)) 5) (empty Env) -> 6
 
 ;;Template
 ; (define (interp s:sentence env:Env)
