@@ -59,12 +59,15 @@
     ((and (s-exp-list? s) (= (length (s-exp->list s)) 2))
      (sentence-funapp (parse (first (s-exp->list s))) (parse (second (s-exp->list s)))))
     (else (error 'parse (s-exp->string s)))))
-    
-    
-    
-     
 
-
+;; Tests :
+(test (parse (number->s-exp 5))(sentence-num 5))
+(test (parse (symbol->s-exp 'x))(sentence-ident 'x))
+(test (parse '(+ 3 4)) (sentence-addition (sentence-num 3) (sentence-num 4)))
+(test (parse '(+ x 8))(sentence-addition (sentence-ident 'x)(sentence-num 8)))
+(test (parse '(+ x x))(sentence-addition (sentence-ident 'x) (sentence-ident 'x)))
+(test (parse '(fundef n (+ n 3))) (sentence-fundef 'n (sentence-addition (sentence-ident 'n) (sentence-num 3))))
+(test (parse '(n 5)) (sentence-funapp (sentence-ident 'n) (sentence-num 5)))
 
 ;; Contract :  interpreter
 ;Sentence, Env -> value
