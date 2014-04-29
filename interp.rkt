@@ -28,7 +28,7 @@
 ; OR
 ;	                   identifier, value, env
 (define-type env
-  [env-empty ]
+  [env-empty]
   [env-ident (id : symbol) (val : value) (next : env)])
 
 ;A value is either; number,
@@ -121,3 +121,11 @@
     [value-number (n) (value-error 'applied-but-not-a-function-value)]
     [value-error (err) (value-error 'applied-but-not-a-function-value)]
     [value-func-val (fv-fp fv-body fv-env) (interp fv-body (env-ident fv-fp applied fv-env))]))
+
+;; Tests:
+
+(test (interp (parse (number->s-exp 5)) (env-empty)) (value-number 5)) 
+(test (interp (parse (number->s-exp 5)) (env-ident 'x (value-number 5) (env-empty))) (value-number 5))
+(test (interp (parse (symbol->s-exp 'x)) (env-ident 'x (value-number 2) (env-empty))) (value-number 2))
+(test (interp (parse '(+ x y)) (env-ident 'x (value-number 4) (env-ident 'y (value-number 3) (env-empty)))) (value-number 7))
+(test (interp (parse '(fundef f s)) (env-empty)) (value-func-val 'f (sentence-ident 's) (env-empty)))
