@@ -1,5 +1,7 @@
 #lang plai-typed
-;;Grammar
+
+;;;SENTENCE;;;
+;;Grammar :
 ;
 ;S -> <number>
 ;S -> <ident>
@@ -10,10 +12,12 @@
 ;;Data Definition : 
 ;
 ;A sentence is either;  number,
-;	                identifier,
-;	                addition,
-;	                fundef,
-;	                funapp
+;	                      identifier,
+;	                      addition,
+;	                      fundef,
+;	                      funapp
+
+
 (define-type sentence 
   [sentence-num (n : number)]
   [sentence-ident (id : symbol)]
@@ -22,32 +26,39 @@
   [sentence-funapp (applier : sentence) (applied : sentence)])
 
 
-
-
+;;;ENVIRONMENT;;;
+;;Data Definition : 
 ;An environment is either; empty,
-; OR
-;	                   identifier, value, env
+;                       OR
+;	                         identifier, value, env
+
 (define-type env
   [env-empty]
   [env-ident (id : symbol) (val : value) (next : env)])
 
+
+
+;;;VALUE;;;
+;;Data Definition : 
 ;A value is either; number,
 ;                   function value
+
 (define-type value
   [value-number (n : number)]
   [value-func-val  (fp : symbol) (body : sentence) (e : env) ]
   [value-error (reason : symbol)])
 
 
+
+;;;PARSER;;;
 ;; parser s-expression -> sentence
 ;;
-;; examples
-;;
+;; Examples :
 ;; '5 -> (sentence-num 5)
 ;; '(+ 3 4) -> (sentence-addition (sentence-num 3) (sentence-num 4))
 ;; '(+ x x) ->(sentence-addition (sentence-ident 'x) (sentence-ident 'x)
 
-;; template
+;; Template :
 
 ;(define (parse [s : s-expression])
 ;  (cond
@@ -60,7 +71,6 @@
 ;    ))
 
 
-;;Function
 (define (parse [s : s-expression])
   (cond
     ((s-exp-number? s) (sentence-num (s-exp->number s)))
@@ -84,7 +94,10 @@
 (test (parse '(fundef n (+ n 3))) (sentence-fundef 'n (sentence-addition (sentence-ident 'n) (sentence-num 3))))
 (test (parse '(n 5)) (sentence-funapp (sentence-ident 'n) (sentence-num 5)))
 
-;; Contract :  interpreter
+
+
+;;;INTERPRETER;;;
+;; Contract :  
 ;Sentence, Env -> value
 
 ;;Purpose :  
@@ -101,7 +114,7 @@
 ; ((fundef x (+ x 3)) 3) (empty Env) -> 6
 ; ((fundef x (+ x 5)) 5) (empty Env) -> 6
 
-;;Template
+;;Template :
 ; (define (interp s : sentence env : Env)
 ;   (type-case s
 ;     [sentence-num (n) ... ]
@@ -123,14 +136,18 @@
                                               e)]))
 
 ;;;helper functions :  
+
 ;; look-up
+
 (define (look-up [id : symbol] [e : env])
   (type-case env e
     [env-empty () (value-error 'undefined-symbol)]
     [env-ident (env-id env-val next-env)
                (if (symbol=? id env-id) env-val (look-up id next-env))]))
 
-;; apply :      value value env -> value
+;; apply :  
+;value value env -> value
+
 (define (apply [applier : value] [applied : value] [e : env])
   (type-case value applier
     [value-number (n) (value-error 'applied-but-not-a-function-value)]
