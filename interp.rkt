@@ -44,8 +44,23 @@
 ;; examples
 ;;
 ;; '5 -> (sentence-num 5)
-;; other examples
+;; '(+ 3 4) -> (sentence-addition (sentence-num 3) (sentence-num 4))
+;; '(+ x x) ->(sentence-addition (sentence-ident 'x) (sentence-ident 'x)
+
 ;; template
+
+;(define (parse [s : s-expression])
+;  (cond
+;    [s-exp-number? ...]
+;    [s-exp-symbol? ...]
+;    [s-exp-list? ...first ...second]
+;    [sentence-fundef ...first ...second]
+;    [sentence-funapp ...first ...second]
+;    [else ... ]
+;    ))
+
+
+;;Function
 (define (parse [s : s-expression])
   (cond
     ((s-exp-number? s) (sentence-num (s-exp->number s)))
